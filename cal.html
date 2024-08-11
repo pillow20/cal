@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Календарь</title>
+  <style>
+    /* Add some basic styling to the calendar */
+.calendar {
+      width: 800px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+.calendar table {
+      border-collapse: collapse;
+    }
+.calendar th,.calendar td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+.highlight {
+      background-color: #c6efce; /* light green */
+    }
+  </style>
+</head>
+<body>
+  <div class="calendar">
+    <h2 id="year"></h2>
+    <table id="calendar-table">
+      <thead>
+        <tr>
+          <th>Пн</th>
+          <th>Вт</th>
+          <th>Ср</th>
+          <th>Чт</th>
+          <th>Пт</th>
+          <th>Сб</th>
+          <th>Вс</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body">
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Get the current year
+    const year = 2024;
+
+    // Set the year header
+    document.getElementById('year').innerHTML = year;
+
+    // Create a calendar for the year
+    const calendar = getCalendarForYear(year);
+
+    // Render the calendar
+    renderCalendar(calendar);
+
+    // Function to get a calendar for a given year
+    function getCalendarForYear(year) {
+      const calendar = [];
+      for (let month = 0; month < 12; month++) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const weeksInMonth = Math.ceil((daysInMonth + firstDay.getDay()) / 7);
+        const monthCalendar = [];
+        for (let week = 0; week < weeksInMonth; week++) {
+          const weekCalendar = [];
+          for (let day = 0; day < 7; day++) {
+            const date = new Date(year, month, day + week * 7 - firstDay.getDay()+2);// двойка выравнивает неделю в начале года
+            if (date.getMonth() === month) {
+              weekCalendar.push(date.getDate());
+            } else {
+              weekCalendar.push('');
+            }
+          }
+          monthCalendar.push(weekCalendar);
+        }
+        calendar.push(monthCalendar);
+      }
+      return calendar;
+    }
+
+// Function to render the calendar
+function renderCalendar(calendar) {
+  const calendarBody = document.getElementById('calendar-body');
+  calendarBody.innerHTML = '';
+  let dayCounter = 0;
+  let dayCounter2 = 0;
+  let dayCounter3 = 0;
+  let dayCounter4 = 0;
+  calendar.forEach((month, index) => {
+    const monthHeader = document.createElement('tr');
+    monthHeader.innerHTML = `<th colspan="7">${getMonthName(index)}</th>`;
+    calendarBody.appendChild(monthHeader);
+    month.forEach((week) => {
+      const weekRow = document.createElement('tr');
+      week.forEach((day) => {
+        const dayCell = document.createElement('td');
+        if (day!== '') {
+          dayCounter++;
+          dayCounter2++;
+          dayCounter3++;
+          dayCounter4++;
+          dayCell.innerHTML = day;
+          if (dayCounter % 8 === 1 || dayCounter2 % 8 === 2) {
+            dayCell.classList.add('highlight');
+          }
+          if (dayCounter3 % 8 === 4) {
+            dayCell.style.backgroundColor ='red';
+          }
+          if (dayCounter4 % 8 === 5) {
+            dayCell.style.backgroundColor ='red';
+          }
+        } else {
+          dayCell.innerHTML = '';
+        }
+        weekRow.appendChild(dayCell);
+      });
+      calendarBody.appendChild(weekRow);
+    });
+  });
+}
+    // Function to get the name of a month
+    function getMonthName(monthIndex) {
+      const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+      return monthNames[monthIndex];
+    }
+  </script>
+</body>
+</html>
